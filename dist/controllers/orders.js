@@ -52,5 +52,13 @@ exports.orders_controller = {
         })
             .catch(next);
     },
+    detailUserAndOrders: (req, res, next) => {
+        user_service
+            .detailUserAndOrders(req, res)
+            .then((data) => {
+            return res.status(data.code).send(data);
+        })
+            .catch(next);
+    },
 };
 //# sourceMappingURL=orders.js.map

@@ -14,13 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkUniqueEmail = void 0;
 const users_1 = __importDefault(require("../models/users"));
+const errorHandler_1 = require("../core/errors/errorHandler");
 // Middleware para verificar la unicidad del correo electrónico
 const checkUniqueEmail = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email } = req.body;
         const existingUser = yield users_1.default.findOne({ email: email });
         if (existingUser) {
-            return res.status(400).json({ message: 'El correo electrónico ya está registrado.' });
+            throw new errorHandler_1.ResourceAlreadyExistsError('El correo electrónico ya está registrado.');
         }
         next();
     }

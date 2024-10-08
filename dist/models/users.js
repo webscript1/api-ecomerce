@@ -71,9 +71,8 @@ const userSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-userSchema.index({ email: 1 }, { unique: true }); // Índice en el campo 'symbol'
-userSchema.index({ createdAt: 1 }); // Índice en el campo 'date'
-// Índice en el campo 'status'
+userSchema.index({ email: 1 }, { unique: true }); // Índice en el campo 'email'
+userSchema.index({ createdAt: 1 }); // Índice en el campo 'createdAt'
 // Middleware para encriptar la contraseña antes de guardarla
 userSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -83,7 +82,6 @@ userSchema.pre('save', function (next) {
                 next();
             }
             catch (error) {
-                // Aseguramos que TypeScript entienda que `error` es del tipo correcto
                 next(error);
             }
         }
@@ -98,9 +96,10 @@ userSchema.methods.comparePassword = function (password) {
         return yield (0, password_1.compare)(password, this.password);
     });
 };
+// Añadir el plugin de paginación
 userSchema.plugin(mongoose_paginate_v2_1.default);
-const nameCollecction = 'User';
+const nameCollection = 'User';
 // Crear y exportar el modelo utilizando la interfaz personalizada
-const User = mongoose_1.default.model(nameCollecction, userSchema);
+const User = mongoose_1.default.model(nameCollection, userSchema);
 exports.default = User;
 //# sourceMappingURL=users.js.map

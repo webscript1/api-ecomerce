@@ -28,14 +28,6 @@ exports.controller_product = {
         })
             .catch(next);
     },
-    get_all: (req, res, next) => {
-        produtcs
-            .get_all(req, res)
-            .then(data => {
-            return res.status(data.code).send(data);
-        })
-            .catch(next);
-    },
     update: (req, res, next) => {
         produtcs
             .update(req, res)

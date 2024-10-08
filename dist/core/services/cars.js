@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartService = void 0;
 const cars_1 = __importDefault(require("../../models/cars"));
+const errorHandler_1 = require("../errors/errorHandler");
 class CartService {
     constructor() { }
     createCart(req, res) {
@@ -66,15 +67,14 @@ class CartService {
                     _id: req.params.id,
                     userId: idUser,
                 }).populate('products.productId');
+                if (!cart) {
+                    throw new errorHandler_1.NotFoundError('Carrito no encontrado');
+                }
                 const data = {
                     code: 200,
                     message: 'Carrito encontrado',
                     data: cart,
                 };
-                if (!cart) {
-                    data.message = 'Carrito no encontrado';
-                    data.code = 404;
-                }
                 return data;
             }
             catch (error) {
@@ -111,15 +111,14 @@ class CartService {
                 const user_id = req.body.user._id;
                 //const cart = await Cart.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('products.productId');
                 const cart = yield cars_1.default.findOneAndUpdate({ _id: req.params.id, userId: user_id }, req.body, { new: true }).populate('products.productId');
+                if (!cart) {
+                    throw new errorHandler_1.NotFoundError('Carrito no encontrado para actualizar');
+                }
                 const data = {
                     code: 200,
                     message: 'Carrito actualizado',
                     data: cart,
                 };
-                if (!cart) {
-                    data.message = 'Carrito no encontrado';
-                    data.code = 404;
-                }
                 return data;
             }
             catch (error) {
@@ -141,8 +140,7 @@ class CartService {
                     data: cart,
                 };
                 if (!cart) {
-                    data.code = 404;
-                    data.message = 'Carrito no encontrado';
+                    throw new errorHandler_1.NotFoundError('Carrito no encontrado para eliminar');
                 }
                 return data;
             }
@@ -157,15 +155,14 @@ class CartService {
                 const idUser = req.body.user._id;
                 console.log('user id ', idUser);
                 const cartsDeleted = yield cars_1.default.deleteMany({ userId: idUser });
+                if (!cartsDeleted) {
+                    throw new errorHandler_1.NotFoundError('No se encontraron carritos para eliminar');
+                }
                 const data = {
                     code: 200,
                     message: 'Todos los carritos eliminados',
                     data: cartsDeleted,
                 };
-                if (!cartsDeleted) {
-                    data.code = 404;
-                    data.message = 'No se encontraron carritos para eliminar';
-                }
                 return data;
             }
             catch (error) {
@@ -176,46 +173,33 @@ class CartService {
     updateQtyCart(req) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('kkkkkkkkkkkkkkkkkkkkkkkkk');
-                /*
-                
                 const user_id = req.body.user._id;
                 const userId = req.body.user._id;
-                const { productId } = req.params;
-                const quantity: number = 2; //Number(req.params.quantity);
-          
-                console.log(`id: `, productId, ' qty: ', quantity);
-                */
+                const { productId } = req.query;
+                const quantity = Number(req.query.quantity);
+                console.log('quantity:', quantity, ' id: ', productId);
                 const data = {
                     code: 200,
                     message: 'Carrito actualizado t5t5t5t5t',
                 };
-                /*
-                let cart = await Cart.findOne({ userId: userId });
-          
+                let cart = yield cars_1.default.findOne({ userId: userId });
                 if (cart) {
-                  console.log(cart.products);
-                  // Carrito existe, verificar si el producto ya está en el carrito
-                  const productIndex = cart.products.findIndex(
-                    p => p.productId.toString() === productId,
-                  );
-          
-                  if (productIndex > -1) {
-                    // Producto ya existe en el carrito, actualizar cantidad
-                    cart.products[productIndex].quantity = 2;
-                    let updateCart = await Cart.findByIdAndUpdate(
-                      cart._id,
-                      { products: cart.products },
-                      { new: true },
-                    );
-                    data.data = updateCart;
+                    console.log(cart.products);
+                    // Carrito existe, verificar si el producto ya está en el carrito
+                    const productIndex = cart.products.findIndex(p => p.productId.toString() === productId);
+                    if (productIndex > -1) {
+                        // Producto ya existe en el carrito, actualizar cantidad
+                        cart.products[productIndex].quantity = quantity;
+                        let updateCart = yield cars_1.default.findByIdAndUpdate(cart._id, { products: cart.products }, { new: true });
+                        data.data = updateCart;
+                        return data;
+                    }
+                }
+                else {
+                    data.code = 404;
+                    data.message = 'nohay productosen carts';
                     return data;
-                  }
-                } else {
-                  data.code = 404;
-                  data.message = 'nohay productosen carts';
-                  return data;
-                }*/
+                }
                 return data;
             }
             catch (error) {

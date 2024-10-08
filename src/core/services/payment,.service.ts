@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import Payment, { IPaymentDcocument } from '../../models/payment.model';
+import Payment, { IPaymentDocument } from '../../models/payment.model';
 import { NotFoundError } from '../errors/errorHandler';
 
 interface serviceResult {
@@ -14,7 +14,7 @@ export class PaymentService {
 
   async createPayment(req: Request, res: Response): Promise<serviceResult> {
     try {
-      const params: IPaymentDcocument = req.body;
+      const params: IPaymentDocument = req.body;
 
       const newModel = new Payment(params);
 
@@ -68,7 +68,7 @@ export class PaymentService {
 
   async updatePayment(req: Request, res: Response): Promise<serviceResult> {
     try {
-      const paramsUpdate: IPaymentDcocument = req.body;
+      const paramsUpdate: IPaymentDocument = req.body;
 
       // Actualizar el Payment
       const payment = await Payment.findByIdAndUpdate(

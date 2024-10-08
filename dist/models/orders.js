@@ -28,9 +28,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+// Definir el esquema de Order
 const orderSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true },
-    email: { type: String, require: false },
+    email: { type: String, required: false },
     products: [
         {
             id: {
@@ -53,7 +54,7 @@ const orderSchema = new mongoose_1.Schema({
                 type: String,
                 required: true,
             },
-            count: { type: Number, require: true },
+            count: { type: Number, required: true },
         },
     ],
     metodoPago: {
@@ -64,7 +65,7 @@ const orderSchema = new mongoose_1.Schema({
     },
     totalAmount: { type: Number, required: true },
     totalConDescuento: { type: Number, required: false },
-    id: { type: String, required: true, unique: true },
+    numberOrder: { type: Number, required: true, unique: true },
     cupon: {
         type: {
             codigo: String,
@@ -85,13 +86,13 @@ const orderSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-orderSchema.index({ userId: 1 }); // Índice en el campo 'symbol'
-orderSchema.index({ createdAt: 1 }); // Índice en el campo 'date'
-orderSchema.index({ status: 1 }); // Índice en el campo 'status'
-orderSchema.index({ totalAmount: 1 }); // Índice en el campo 'status'
+// Crear índices
+orderSchema.index({ userId: 1 });
+orderSchema.index({ createdAt: 1 });
+orderSchema.index({ status: 1 });
 // Añadir el plugin de paginación
 orderSchema.plugin(mongoose_paginate_v2_1.default);
-// Definir el modelo utilizando la interfaz extendida
+// Crear y exportar el modelo utilizando el tipo personalizado PaginateModel
 const Order = mongoose_1.default.model('Order', orderSchema);
 exports.default = Order;
 //# sourceMappingURL=orders.js.map

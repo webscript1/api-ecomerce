@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { IProductDocument } from './products';
 
-export interface IPaymentDcocument extends Document {
+// Definir la interfaz para el documento de Payment
+export interface IPaymentDocument extends Document {
   name: string;
   wallet: string;
   crypto: string;
@@ -10,10 +10,13 @@ export interface IPaymentDcocument extends Document {
   template: string;
   red: string;
 }
-// Definir una interfaz para el modelo de Mongoose con el método paginate
-interface IPaymentModel extends Model<IPaymentDcocument> {
-  paginate(query?: any, options?: any): Promise<any>; // Definir el método paginate
-}
+
+// Crear un tipo personalizado para manejar el método paginate
+type PaginateModel<T> = Model<T> & {
+  paginate: (query?: any, options?: any) => Promise<any>;
+};
+
+// Definir el esquema de Payment
 const paymentSchema: Schema = new Schema({
   name: {
     type: String,
@@ -46,12 +49,14 @@ const paymentSchema: Schema = new Schema({
     trim: true,
   },
 });
+
+// Aplicar el plugin de paginación
 paymentSchema.plugin(mongoosePaginate);
 
-// Crear y exportar el modelo utilizando la interfaz personalizada
-const Payment: IPaymentModel = mongoose.model<IProductDocument, IPaymentModel>(
-  'Payment',
-  paymentSchema,
-);
+// Crear y exportar el modelo utilizando el tipo personalizado PaginateModel
+const Payment: PaginateModel<IPaymentDocument> = mongoose.model<
+  IPaymentDocument,
+  PaginateModel<IPaymentDocument>
+>('Payment', paymentSchema);
 
 export default Payment;

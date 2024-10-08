@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
+// Definir la interfaz para el documento del carrito (Cart)
 interface ICart extends Document {
   userId: mongoose.Types.ObjectId;
   products: Array<{
@@ -10,6 +11,12 @@ interface ICart extends Document {
   createdAt: Date;
 }
 
+// Crear un tipo personalizado para manejar el método paginate
+type PaginateModel<T> = Model<T> & {
+  paginate: (query?: any, options?: any) => Promise<any>;
+};
+
+// Definir el esquema del carrito (Cart)
 const cartSchema: Schema<ICart> = new Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   products: [
@@ -27,16 +34,18 @@ const cartSchema: Schema<ICart> = new Schema({
     default: Date.now,
   },
 });
-cartSchema.index({ userId: 1 }); // Índice en el campo 'symbol'
-cartSchema.index({ createdAt: 1 }); // Índice en el campo 'date'
+
+// Añadir índices al esquema
+cartSchema.index({ userId: 1 }); // Índice en el campo 'userId'
+cartSchema.index({ createdAt: 1 }); // Índice en el campo 'createdAt'
 
 // Añadir el plugin de paginación
 cartSchema.plugin(mongoosePaginate);
 
-// Definir el modelo utilizando la interfaz extendida
-const Cart = mongoose.model<ICart>(
+// Crear y exportar el modelo utilizando el tipo personalizado PaginateModel
+const Cart: PaginateModel<ICart> = mongoose.model<ICart, PaginateModel<ICart>>(
   'Cart',
   cartSchema,
-) as mongoose.PaginateModel<ICart>;
+);
 
 export default Cart;

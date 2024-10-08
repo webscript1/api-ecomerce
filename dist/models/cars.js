@@ -28,6 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+// Definir el esquema del carrito (Cart)
 const cartSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true },
     products: [
@@ -45,11 +46,12 @@ const cartSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-cartSchema.index({ userId: 1 }); // Índice en el campo 'symbol'
-cartSchema.index({ createdAt: 1 }); // Índice en el campo 'date'
+// Añadir índices al esquema
+cartSchema.index({ userId: 1 }); // Índice en el campo 'userId'
+cartSchema.index({ createdAt: 1 }); // Índice en el campo 'createdAt'
 // Añadir el plugin de paginación
 cartSchema.plugin(mongoose_paginate_v2_1.default);
-// Definir el modelo utilizando la interfaz extendida
+// Crear y exportar el modelo utilizando el tipo personalizado PaginateModel
 const Cart = mongoose_1.default.model('Cart', cartSchema);
 exports.default = Cart;
 //# sourceMappingURL=cars.js.map

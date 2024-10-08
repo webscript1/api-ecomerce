@@ -9,12 +9,13 @@ const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 const compression_1 = __importDefault(require("compression"));
 const products_1 = __importDefault(require("./rutes/products"));
-const users_1 = __importDefault(require("./rutes/users"));
-const orders_1 = __importDefault(require("./rutes/orders"));
-const carts_1 = __importDefault(require("./rutes/carts"));
-const cupon_rute_1 = __importDefault(require("./rutes/cupon.rute"));
-const payment_rutes_1 = __importDefault(require("./rutes/payment.rutes"));
-const category_rutes_1 = __importDefault(require("./rutes/category.rutes"));
+//import rutes_user from './rutes/users';
+//import rutes_orders from './rutes/orders';
+//import rutes_carts from './rutes/carts';
+//import rutes_cupon from './rutes/cupon.rute';
+//import rutes_payment from './rutes/payment.rutes';
+//import rutes_category from './rutes/category.rutes';
+const error_middleware_1 = require("./middleware/erros/error.middleware");
 const subRuta = '/';
 const app = (0, express_1.default)();
 //cargar archivos rutas
@@ -29,30 +30,18 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, cors_1.default)({
     origin: '*',
 }));
-//rutas
-app.use((req, res, next) => {
-    console.log(`Solicitud desde IP: ${req.ip}`);
-    next();
-});
 app.get('/', (req, res) => {
-    res.send('Bienvenido a la página principal! _)_');
+    res.send('Bienvenido a la página principal!');
 });
 app.use('/products', products_1.default);
-app.use('/users', users_1.default);
-app.use('/orders', orders_1.default);
-app.use('/carts', carts_1.default);
-app.use('/cupon', cupon_rute_1.default);
-app.use('/payment', payment_rutes_1.default);
-app.use('/category', category_rutes_1.default);
+//a; //pp.use('/users', rutes_user);
+//app.use('/orders', rutes_orders);
+//app.use('/carts', rutes_carts);
+//app.use('/cupon', rutes_cupon);
+//app.use('/payment', rutes_payment);
+//app.use('/category', rutes_category);
 // Middleware de manejo de errores
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(err.status || 500);
-    res.json({
-        message: err.message,
-        error: process.env.NODE_ENV === 'development' ? err : {},
-    });
-});
+app.use(error_middleware_1.errorHandler);
 //exportar
 exports.default = app;
 //# sourceMappingURL=app.js.map

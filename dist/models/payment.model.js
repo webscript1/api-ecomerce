@@ -22,9 +22,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const modelSchema = new mongoose_1.Schema({
+const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+// Definir el esquema de Payment
+const paymentSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
@@ -56,6 +61,9 @@ const modelSchema = new mongoose_1.Schema({
         trim: true,
     },
 });
-const Model = mongoose_1.default.model('Payment', modelSchema);
-exports.default = Model;
+// Aplicar el plugin de paginación
+paymentSchema.plugin(mongoose_paginate_v2_1.default);
+// Crear y exportar el modelo utilizando el tipo personalizado PaginateModel
+const Payment = mongoose_1.default.model('Payment', paymentSchema);
+exports.default = Payment;
 //# sourceMappingURL=payment.model.js.map

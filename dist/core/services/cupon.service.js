@@ -14,12 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CuponService = void 0;
 const cupon_model_1 = __importDefault(require("../../models/cupon.model"));
+const errorHandler_1 = require("../errors/errorHandler");
 class CuponService {
     constructor() { }
     createCupon(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const cupon = new cupon_model_1.default(req.body);
+                const params = req.body;
+                const cupon = new cupon_model_1.default(params);
                 const savedCupon = yield cupon.save();
                 const data = {
                     code: 201,
@@ -37,15 +39,14 @@ class CuponService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const cupon = yield cupon_model_1.default.findOne({ codigo: req.params.codigo });
+                if (!cupon) {
+                    throw new errorHandler_1.NotFoundError('Cupón no encontrado');
+                }
                 const data = {
                     code: 200,
                     message: `cupon de ${cupon === null || cupon === void 0 ? void 0 : cupon.descuento}% aplicado`,
                     data: cupon,
                 };
-                if (!cupon) {
-                    data.message = 'Cupón no encontrado';
-                    data.code = 404;
-                }
                 return data;
             }
             catch (error) {
@@ -80,15 +81,14 @@ class CuponService {
                 const cupon = yield cupon_model_1.default.findByIdAndUpdate(req.params.id, req.body, {
                     new: true,
                 });
+                if (!cupon) {
+                    throw new errorHandler_1.NotFoundError('Cupón no encontrado para actualizar');
+                }
                 const data = {
                     code: 200,
                     message: 'Cupón actualizado',
                     data: cupon,
                 };
-                if (!cupon) {
-                    data.message = 'Cupón no encontrado';
-                    data.code = 404;
-                }
                 return data;
             }
             catch (error) {
@@ -106,8 +106,7 @@ class CuponService {
                     data: cupon,
                 };
                 if (!cupon) {
-                    data.message = 'Cupón no encontrado';
-                    data.code = 404;
+                    throw new errorHandler_1.NotFoundError('Cupón no encontrado');
                 }
                 return data;
             }
@@ -124,11 +123,6 @@ class CuponService {
                     message: 'todos los cupones eliminados',
                 };
                 const delete_product = yield cupon_model_1.default.deleteMany();
-                if (!delete_product) {
-                    data.code = 404;
-                    data.message = `no hay cupones`;
-                    return data;
-                }
                 data.data = delete_product;
                 return data;
             }

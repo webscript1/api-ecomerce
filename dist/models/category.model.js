@@ -22,13 +22,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+// Definir el esquema de Category
 const CategorySchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     url: { type: String, required: true },
-    order: { type: Number, require: false, unique: true },
+    order: { type: Number, required: false, unique: true },
 });
+// Añadir el plugin de paginación
+CategorySchema.plugin(mongoose_paginate_v2_1.default);
+// Crear y exportar el modelo utilizando el tipo personalizado PaginateModel
 const Category = mongoose_1.default.model('Category', CategorySchema);
 exports.default = Category;
 //# sourceMappingURL=category.model.js.map

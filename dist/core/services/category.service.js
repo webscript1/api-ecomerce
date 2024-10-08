@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryService = void 0;
 const category_model_1 = __importDefault(require("../../models/category.model"));
+const errorHandler_1 = require("../errors/errorHandler");
 class CategoryService {
     constructor() { }
     createCategory(req) {
@@ -37,15 +38,14 @@ class CategoryService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const category = yield category_model_1.default.findById(req.params.id);
+                if (!category) {
+                    throw new errorHandler_1.NotFoundError('Categoría no encontrada');
+                }
                 const data = {
                     code: 200,
                     message: 'Categoría encontrada',
                     data: category,
                 };
-                if (!category) {
-                    data.message = 'Categoría no encontrada';
-                    data.code = 404;
-                }
                 return data;
             }
             catch (error) {
@@ -73,15 +73,14 @@ class CategoryService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const category = yield category_model_1.default.findByIdAndUpdate(req.params.id, req.body, { new: true });
+                if (!category) {
+                    throw new errorHandler_1.NotFoundError('Categoría no encontrada para actualizar');
+                }
                 const data = {
                     code: 200,
                     message: 'Categoría actualizada',
                     data: category,
                 };
-                if (!category) {
-                    data.message = 'Categoría no encontrada';
-                    data.code = 404;
-                }
                 return data;
             }
             catch (error) {
@@ -99,8 +98,7 @@ class CategoryService {
                     data: category,
                 };
                 if (!category) {
-                    data.message = 'Categoría no encontrada';
-                    data.code = 404;
+                    throw new errorHandler_1.NotFoundError('Categoría no encontrada para eliminar');
                 }
                 return data;
             }
@@ -118,10 +116,6 @@ class CategoryService {
                     message: 'Todas las categorías eliminadas',
                     data: deletedCategories,
                 };
-                if (!deletedCategories) {
-                    data.code = 404;
-                    data.message = 'No se encontraron categorías para eliminar';
-                }
                 return data;
             }
             catch (error) {

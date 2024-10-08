@@ -14,24 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentService = void 0;
 const payment_model_1 = __importDefault(require("../../models/payment.model"));
+const errorHandler_1 = require("../errors/errorHandler");
 class PaymentService {
     constructor() { }
     createPayment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { name, wallet, crypto, image, template, red } = req.body;
-                const newModel = new payment_model_1.default({
-                    name,
-                    wallet,
-                    crypto,
-                    image,
-                    template,
-                    red,
-                });
+                const params = req.body;
+                const newModel = new payment_model_1.default(params);
                 yield newModel.save();
+                // Devolver el resultado exitoso
                 const data = {
-                    code: 200,
-                    message: 'Modelo creado exitosamente',
+                    code: 201, // Código HTTP 201: Recurso creado
+                    message: 'Payment creado exitosamente',
                     data: newModel,
                 };
                 return data;
@@ -44,32 +39,28 @@ class PaymentService {
     getPayment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const model = yield payment_model_1.default.findById(req.params.id);
                 const data = {
                     code: 200,
                     message: 'Modelo encontrado',
-                    data: model,
                 };
-                if (!model) {
-                    data.message = 'Modelo no encontrado';
-                    data.code = 404;
+                const { id, page = 1, sort = -1, limit = 10 } = req.query;
+                if (id) {
+                    const payment = yield payment_model_1.default.findById(id);
+                    if (!payment) {
+                        throw new errorHandler_1.NotFoundError('payment no encontrado');
+                    }
+                    data.data = payment;
+                    return data;
                 }
-                return data;
-            }
-            catch (error) {
-                throw error;
-            }
-        });
-    }
-    getPayments(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const models = yield payment_model_1.default.find();
-                const data = {
-                    code: 200,
-                    message: 'Modelos encontrados',
-                    data: models,
+                // Opción de paginación
+                const options = {
+                    limit: Number(limit), // Aseguramos que limit sea un número
+                    page: Number(page), // Aseguramos que page sea un número
+                    sort: { createdAt: Number(sort) }, // Sort por fecha de creación
                 };
+                // Paginación de productos
+                const payment = yield payment_model_1.default.paginate({}, options);
+                data.data = payment;
                 return data;
             }
             catch (error) {
@@ -80,18 +71,20 @@ class PaymentService {
     updatePayment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const model = yield payment_model_1.default.findByIdAndUpdate(req.params.id, req.body, {
-                    new: true,
+                const paramsUpdate = req.body;
+                // Actualizar el Payment
+                const payment = yield payment_model_1.default.findByIdAndUpdate(req.params.id, paramsUpdate, {
+                    new: true, // Retorna el nuevo documento actualizado
                 });
+                if (!payment) {
+                    throw new errorHandler_1.NotFoundError('Payment no encontrado para actualizar');
+                }
+                // Devolver la respuesta solo si se actualizó correctamente
                 const data = {
                     code: 200,
-                    message: 'Modelo actualizado',
-                    data: model,
+                    message: 'Payment actualizado',
+                    data: payment,
                 };
-                if (!model) {
-                    data.message = 'Modelo no encontrado';
-                    data.code = 404;
-                }
                 return data;
             }
             catch (error) {
@@ -102,16 +95,15 @@ class PaymentService {
     deletePayment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const model = yield payment_model_1.default.findByIdAndDelete(req.params.id);
+                const payment = yield payment_model_1.default.findByIdAndDelete(req.params.id);
+                if (!payment) {
+                    throw new errorHandler_1.NotFoundError('Payment no encontrado para eliminar');
+                }
                 const data = {
                     code: 200,
-                    message: 'Modelo eliminado',
-                    data: model,
+                    message: 'Payment eliminado eliminado',
+                    data: payment,
                 };
-                if (!model) {
-                    data.code = 404;
-                    data.message = 'Modelo no encontrado';
-                }
                 return data;
             }
             catch (error) {
@@ -122,16 +114,12 @@ class PaymentService {
     deleteAllPayment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const modelsDeleted = yield payment_model_1.default.deleteMany();
+                const paymentDeleted = yield payment_model_1.default.deleteMany();
                 const data = {
                     code: 200,
                     message: 'Todos los modelos eliminados',
-                    data: modelsDeleted,
+                    data: paymentDeleted,
                 };
-                if (!modelsDeleted) {
-                    data.code = 404;
-                    data.message = 'No se encontraron modelos para eliminar';
-                }
                 return data;
             }
             catch (error) {

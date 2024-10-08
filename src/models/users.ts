@@ -2,9 +2,8 @@ import mongoose, { CallbackError, Document, Model, Schema } from 'mongoose';
 import { encrypt, compare } from '../core/utils/password';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
-// Definir una interfaz para el esquema del documento
-interface IUserDocument extends Document {
-  // Definir tus campos de documento aquí
+// Definir una interfaz para el esquema del documentoe
+export interface IUserDocument extends Document {
   firstName: string;
   lastName: string;
   email: string;
@@ -20,18 +19,7 @@ interface IUserModel extends Model<IUserDocument> {
   paginate(query?: any, options?: any): Promise<any>; // Definir el método paginate
 }
 
-export interface IUser extends Document {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  phone: string;
-  role: 'user' | 'admin';
-  createdAt: Date;
-  comparePassword(password: string): Promise<boolean>;
-}
-
-const userSchema: Schema<IUser> = new Schema({
+const userSchema: Schema<IUserDocument> = new Schema({
   firstName: {
     type: String,
     required: true,
@@ -64,18 +52,17 @@ const userSchema: Schema<IUser> = new Schema({
     default: Date.now,
   },
 });
-userSchema.index({ email: 1 }, { unique: true }); // Índice en el campo 'symbol'
-userSchema.index({ createdAt: 1 }); // Índice en el campo 'date'
-// Índice en el campo 'status'
+
+userSchema.index({ email: 1 }, { unique: true }); // Índice en el campo 'email'
+userSchema.index({ createdAt: 1 }); // Índice en el campo 'createdAt'
 
 // Middleware para encriptar la contraseña antes de guardarla
-userSchema.pre<IUser>('save', async function (next) {
+userSchema.pre<IUserDocument>('save', async function (next) {
   if (this.isModified('password') || this.isNew) {
     try {
       this.password = await encrypt(this.password);
       next();
     } catch (error) {
-      // Aseguramos que TypeScript entienda que `error` es del tipo correcto
       next(error as CallbackError | undefined);
     }
   } else {
@@ -89,13 +76,15 @@ userSchema.methods.comparePassword = async function (
 ): Promise<boolean> {
   return await compare(password, this.password);
 };
+
+// Añadir el plugin de paginación
 userSchema.plugin(mongoosePaginate);
 
-const nameCollecction = 'User';
+const nameCollection = 'User';
 
 // Crear y exportar el modelo utilizando la interfaz personalizada
 const User: IUserModel = mongoose.model<IUserDocument, IUserModel>(
-  nameCollecction,
+  nameCollection,
   userSchema,
 );
 

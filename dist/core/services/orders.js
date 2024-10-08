@@ -16,6 +16,8 @@ exports.OrdersService = void 0;
 const orders_1 = __importDefault(require("../../models/orders"));
 const cupon_model_1 = __importDefault(require("../../models/cupon.model"));
 const products_1 = __importDefault(require("../../models/products"));
+const users_1 = __importDefault(require("../../models/users"));
+const errorHandler_1 = require("../errors/errorHandler");
 class OrdersService {
     constructor() { }
     createOrder(req, res) {
@@ -23,6 +25,7 @@ class OrdersService {
             try {
                 const idUser = req.body.user._id;
                 const order = req.body;
+                order.email = req.body.user.email;
                 let orderModel = new orders_1.default(order);
                 orderModel.userId = idUser;
                 let savedOrder;
@@ -35,17 +38,33 @@ class OrdersService {
                 let searcuCupon;
                 let idlistProdtcs = order.products.map(item => item.id);
                 let searchProducts = [];
+                let orderNumber;
+                let searchOrderNumber;
+                let attempts = 0;
+                const maxAttempts = 10; // Limitar el número de intentos para evitar un bucle infinito
+                //buscando el numero de order para saber si existe, si existe crearlo de nuevo
+                do {
+                    orderNumber = this.generateRandomOrderNumber();
+                    searchOrderNumber = yield orders_1.default.findOne({ numberOrder: orderNumber });
+                    attempts++;
+                    if (attempts > maxAttempts) {
+                        throw new errorHandler_1.ResourceAlreadyExistsError('No se pudo generar un número de orden único después de varios intentos');
+                    }
+                } while (searchOrderNumber);
+                orderModel.numberOrder = orderNumber;
                 //buscando los productos para ver el precio
                 searchProducts = yield products_1.default.find({
                     _id: { $in: idlistProdtcs },
                 });
-                console.log('sear products+++++++++++++++: ', searchProducts);
+                if (!searchProducts) {
+                    throw new errorHandler_1.NotFoundError('estos pructos ya no estan disponibles');
+                }
+                // console.log('sear products+++++++++++++++: ', searchProducts);
                 if (searchProducts) {
                     order.products.forEach(item => {
                         for (const iterator of searchProducts) {
                             if (iterator._id === item.id) {
                                 item.price = iterator.price;
-                                break;
                             }
                         }
                     });
@@ -85,18 +104,17 @@ class OrdersService {
     getOrder(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const userId = req.body.user._id;
-                const order = yield orders_1.default.findOne({ _id: req.params.id, userId: userId });
+                const { numberOrder } = req.query;
                 const data = {
                     code: 200,
                     message: 'order',
-                    data: order,
                 };
-                if (!order) {
-                    data.message = 'order no encontrada';
-                    data.code = 404;
-                    return data;
+                const orders = yield orders_1.default.findOne({ numberOrder: numberOrder });
+                if (!orders) {
+                    throw new errorHandler_1.NotFoundError(`orden ${numberOrder} no encontrada`);
                 }
+                data.data = orders;
+                return data;
                 return data;
             }
             catch (error) {
@@ -107,27 +125,24 @@ class OrdersService {
     getOrders(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const idUser = req.body.user._id;
-                const { page = 1, limit = 10, email } = req.query;
-                console.log('email: ', email);
+                const userId = req.body.user._id;
+                const { page = 1, sort = -1, limit = 10, email } = req.query;
                 const options = {
                     page: Number(page),
                     limit: Number(limit),
+                    sort: { createdAt: Number(sort) },
                 };
                 const data = {
                     code: 200,
-                    message: 'orders',
+                    message: 'order',
                 };
                 if (email) {
-                    const orders = yield orders_1.default.paginate({ email: email }, options);
-                    console.log('ha entrado en email: ', email, orders);
+                    const orders = yield orders_1.default.paginate({ email: email, userId: userId }, options);
                     data.data = orders;
+                    return data;
                 }
-                else {
-                    const orders = yield orders_1.default.paginate({ userId: idUser }, options);
-                    console.log('ha entrado en sesion: ', email, orders, ' user id:', idUser);
-                    data.data = orders;
-                }
+                const orders = yield orders_1.default.paginate({ userId: userId }, options);
+                data.data = orders;
                 return data;
             }
             catch (error) {
@@ -140,16 +155,14 @@ class OrdersService {
             try {
                 const idUser = req.body.user._id;
                 const order = yield orders_1.default.findOneAndUpdate({ _id: req.params.id, userId: idUser }, req.body, { new: true });
+                if (!order) {
+                    throw new errorHandler_1.NotFoundError('order no encontrada para actualizar');
+                }
                 const data = {
                     code: 200,
                     message: 'order actualizada',
                     data: order,
                 };
-                if (!order) {
-                    data.message = 'order no encontrada';
-                    data.code = 404;
-                    return data;
-                }
                 return data;
             }
             catch (error) {
@@ -165,15 +178,14 @@ class OrdersService {
                     _id: req.params.id,
                     userId: idUser,
                 });
+                if (!order) {
+                    throw new errorHandler_1.NotFoundError('order no encontrada para eliminar');
+                }
                 const data = {
                     code: 200,
                     message: 'order eliminada',
                     data: order,
                 };
-                if (!order) {
-                    data.code = 404;
-                    data.message = 'order no encontrada';
-                }
                 return data;
             }
             catch (error) {
@@ -186,15 +198,14 @@ class OrdersService {
             try {
                 const idUser = req.body.user._id;
                 const ordersDelete = yield orders_1.default.deleteMany({ userId: idUser });
+                if (!ordersDelete) {
+                    throw new errorHandler_1.NotFoundError('no se encontaron ordenes para eliminar');
+                }
                 const data = {
                     code: 200,
                     message: 'todas lasordes eliminadas',
                     data: ordersDelete,
                 };
-                if (!ordersDelete) {
-                    data.code = 404;
-                    data.message = 'order no encontrada';
-                }
                 return data;
             }
             catch (error) {
@@ -229,6 +240,52 @@ class OrdersService {
             }
             return orderId;
         });
+    }
+    detailUserAndOrders(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = {
+                    code: 200,
+                    message: 'detalle user y orders',
+                };
+                const userId = req.body.user._id;
+                let user;
+                let orders;
+                let detailUser = {
+                    user: undefined,
+                    orders: undefined,
+                };
+                const { page = 1, sort = -1 } = req.query;
+                let products;
+                const options = {
+                    limit: 10,
+                    page: Number(page) || 1,
+                    // Proyección: solo las propiedades 'result' y 'profit'
+                    sort: { createdAt: Number(sort) || -1 }, //-1 : desendente 1:asendente
+                };
+                if (userId) {
+                    user = yield users_1.default.findById(userId).select('firstName lastName email ');
+                    if (!user) {
+                        data.code = 404;
+                        data.message = 'usuario no encontrado ';
+                        return data;
+                    }
+                    detailUser.user = user;
+                }
+                orders = yield orders_1.default.paginate({ userId: userId }, options);
+                detailUser.orders = orders;
+                data.data = detailUser;
+                console.log('order: ', data);
+                return data;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    generateRandomOrderNumber() {
+        // Genera un número aleatorio de 7 dígitos
+        return Math.floor(1000000 + Math.random() * 9000000);
     }
 }
 exports.OrdersService = OrdersService;

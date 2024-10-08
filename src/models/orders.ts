@@ -1,8 +1,9 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { cuponDetail } from '../core/interfaces/cupon.interface';
 import { MetodoPago, ProductOrder } from '../core/interfaces/order.interface';
 
+// Definir la interfaz para el documento de Order
 export interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
   products: ProductOrder[];
@@ -16,9 +17,15 @@ export interface IOrder extends Document {
   email: string;
 }
 
+// Crear un tipo personalizado para manejar el método paginate
+type PaginateModel<T> = Model<T> & {
+  paginate: (query?: any, options?: any) => Promise<any>;
+};
+
+// Definir el esquema de Order
 const orderSchema: Schema<IOrder> = new Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  email: { type: String, require: false },
+  email: { type: String, required: false },
   products: [
     {
       id: {
@@ -41,7 +48,7 @@ const orderSchema: Schema<IOrder> = new Schema({
         type: String,
         required: true,
       },
-      count: { type: Number, require: true },
+      count: { type: Number, required: true },
     },
   ],
   metodoPago: {
@@ -73,19 +80,19 @@ const orderSchema: Schema<IOrder> = new Schema({
     default: Date.now,
   },
 });
-orderSchema.index({ userId: 1 }); // Índice en el campo 'symbol'
-orderSchema.index({ createdAt: 1 }); // Índice en el campo 'date'
-orderSchema.index({ status: 1 }); // Índice en el campo 'status'
-//orderSchema.index({ totalAmount: 1 }); // Índice en el campo 'status'
-//orderSchema.index({ numberOrder: 1 }); // Índice en el campo 'status'
+
+// Crear índices
+orderSchema.index({ userId: 1 });
+orderSchema.index({ createdAt: 1 });
+orderSchema.index({ status: 1 });
 
 // Añadir el plugin de paginación
 orderSchema.plugin(mongoosePaginate);
 
-// Definir el modelo utilizando la interfaz extendida
-const Order = mongoose.model<IOrder>(
-  'Order',
-  orderSchema,
-) as mongoose.PaginateModel<IOrder>;
+// Crear y exportar el modelo utilizando el tipo personalizado PaginateModel
+const Order: PaginateModel<IOrder> = mongoose.model<
+  IOrder,
+  PaginateModel<IOrder>
+>('Order', orderSchema);
 
 export default Order;

@@ -18,6 +18,7 @@ exports.User = users_1.default;
 const password_1 = require("../utils/password");
 const jwt_1 = require("../utils/jwt");
 const orders_1 = __importDefault(require("../../models/orders"));
+const errorHandler_1 = require("../errors/errorHandler");
 class User_service {
     test() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -59,31 +60,33 @@ class User_service {
                     code: 200,
                     message: 'usuario',
                 };
-                const { id, page, sort } = req.query;
-                let products;
+                const { id, page, sort, limit = 10, email } = req.query;
+                let users;
                 const options = {
-                    limit: 10,
+                    limit: limit,
                     page: page || 1,
                     // Proyección: solo las propiedades 'result' y 'profit'
                     sort: { createdAt: Number(sort) || -1 }, //-1 : desendente 1:asendente
+                    select: '-password',
                 };
                 if (id) {
-                    products = yield users_1.default.findById(id);
-                    if (!products) {
-                        data.code = 404;
-                        data.message = 'usuario no encontrado ';
-                        return data;
+                    users = yield users_1.default.findById(id).select('-password');
+                    if (!users) {
+                        throw new errorHandler_1.NotFoundError('usuario no encontrado');
                     }
-                    data.data = products;
+                    data.data = users;
                     return data;
                 }
-                if (page) {
-                    products = yield users_1.default.paginate({}, options);
-                    data.data = products;
+                if (email) {
+                    users = yield users_1.default.findOne({ email: email }).select('-password');
+                    if (!users) {
+                        throw new errorHandler_1.NotFoundError('usuario no encontrado');
+                    }
+                    data.data = users;
                     return data;
                 }
-                products = yield users_1.default.paginate({}, options);
-                data.data = products;
+                users = yield users_1.default.paginate({}, options);
+                data.data = users;
                 return data;
             }
             catch (error) {
@@ -101,11 +104,9 @@ class User_service {
                 const { id } = req.params;
                 const user_update = yield users_1.default.findByIdAndUpdate(id, req.body, {
                     new: true,
-                });
+                }).select('-password');
                 if (!user_update) {
-                    data.message = 'usuario no encontrado';
-                    data.code = 404;
-                    return data;
+                    throw new errorHandler_1.NotFoundError('usuario no encontrado para actualizar');
                 }
                 data.data = user_update;
                 return data;
@@ -123,11 +124,9 @@ class User_service {
                     message: 'usuario eliminado',
                 };
                 const { id } = req.params;
-                const user_delete = yield users_1.default.findByIdAndDelete(id);
+                const user_delete = yield users_1.default.findByIdAndDelete(id).select('-password');
                 if (!user_delete) {
-                    data.message = 'usuario no encontrado';
-                    data.code = 404;
-                    return data;
+                    throw new errorHandler_1.NotFoundError('usuario no encontrado para eliminar');
                 }
                 data.data = user_delete;
                 return data;
@@ -146,9 +145,7 @@ class User_service {
                 };
                 const user_delete = yield users_1.default.deleteMany();
                 if (!user_delete) {
-                    data.message = 'no hay usuarios';
-                    data.code = 404;
-                    return data;
+                    throw new errorHandler_1.NotFoundError('no hay usuarios para eliminar');
                 }
                 data.data = user_delete;
                 return data;
@@ -171,16 +168,12 @@ class User_service {
                 const user = yield users_1.default.findOne({ email });
                 // Verificar si el usuario existe
                 if (!user) {
-                    data.code = 401;
-                    data.message = 'Correo electrónico o contraseña incorrectos.';
-                    return data;
+                    throw new errorHandler_1.NotFoundError('Email no existe');
                 }
                 // Verificar la contraseña
                 const passwordMatch = yield (0, password_1.compare)(password, user.password);
                 if (!passwordMatch) {
-                    data.code = 401;
-                    data.message = 'Correo electrónico o contraseña incorrectos.';
-                    return data;
+                    throw new errorHandler_1.UnauthorizedError('contraseña incorrecta.');
                 }
                 // Generar token de acceso (JWT) para el usuario
                 token = yield (0, jwt_1.tokenSing)(user);

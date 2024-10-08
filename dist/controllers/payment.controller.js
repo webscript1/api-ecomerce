@@ -36,14 +36,6 @@ exports.payment_controller = {
         })
             .catch(next);
     },
-    get_all: (req, res, next) => {
-        payment_service
-            .getPayments(req, res)
-            .then((data) => {
-            return res.status(data.code).send(data);
-        })
-            .catch(next);
-    },
     delete_all: (req, res, next) => {
         payment_service
             .deleteAllPayment(req, res)

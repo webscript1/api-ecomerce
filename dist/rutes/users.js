@@ -12,11 +12,10 @@ const sesion_1 = __importDefault(require("../middleware/sesion"));
 const router = (0, express_1.Router)();
 router.get('/test', users_1.user_controller.test);
 router.post('/create', user_validator_1.valitador_sing_up, checkUniqueEmail_1.checkUniqueEmail, users_1.user_controller.create);
-router.get('/get', sesion_1.default, users_1.user_controller.get);
-router.put('/update/:id', sesion_1.default, users_1.user_controller.update);
+router.get('/', sesion_1.default, users_1.user_controller.get);
+router.put('/:id', sesion_1.default, users_1.user_controller.update);
 router.delete('/delete/:id', sesion_1.default, (0, roles_1.checkRole)(['admin']), users_1.user_controller.delete);
 router.delete('/delete-all', sesion_1.default, (0, roles_1.checkRole)(['admin']), users_1.user_controller.deleteAll);
 router.post('/sing-in', user_validator_1.valitador_sing_in, users_1.user_controller.sing_in);
-router.get('/detail-user-and-orders', sesion_1.default, users_1.user_controller.detailUserAndOrders);
 exports.default = router;
 //# sourceMappingURL=users.js.map
