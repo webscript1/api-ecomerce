@@ -6,7 +6,7 @@ const cart_service = new cars_1.CartService();
 exports.cars_controller = {
     create: (req, res, next) => {
         cart_service
-            .createCart(req, res)
+            .createCart(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -14,7 +14,7 @@ exports.cars_controller = {
     },
     get: (req, res, next) => {
         cart_service
-            .getCart(req, res)
+            .getCart(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -22,7 +22,7 @@ exports.cars_controller = {
     },
     update: (req, res, next) => {
         cart_service
-            .updateCart(req, res)
+            .updateCart(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -30,7 +30,7 @@ exports.cars_controller = {
     },
     delete: (req, res, next) => {
         cart_service
-            .deleteCart(req, res)
+            .deleteCart(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -38,7 +38,7 @@ exports.cars_controller = {
     },
     get_all: (req, res, next) => {
         cart_service
-            .getCarts(req, res)
+            .getCarts(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -46,7 +46,7 @@ exports.cars_controller = {
     },
     delete_all: (req, res, next) => {
         cart_service
-            .deleteAllCarts(req, res)
+            .deleteAllCarts(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -55,6 +55,14 @@ exports.cars_controller = {
     updateQtyCart: (req, res, next) => {
         cart_service
             .updateQtyCart(req)
+            .then((data) => {
+            return res.status(data.code).send(data);
+        })
+            .catch(next);
+    },
+    countCart: (req, res, next) => {
+        cart_service
+            .countOrdersCart(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })

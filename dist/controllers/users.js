@@ -14,7 +14,7 @@ exports.user_controller = {
     },
     create: (req, res, next) => {
         user_service
-            .create(req, res)
+            .create(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -22,7 +22,7 @@ exports.user_controller = {
     },
     get: (req, res, next) => {
         user_service
-            .get(req, res)
+            .get(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -30,7 +30,7 @@ exports.user_controller = {
     },
     update: (req, res, next) => {
         user_service
-            .update(req, res)
+            .update(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -38,7 +38,7 @@ exports.user_controller = {
     },
     delete: (req, res, next) => {
         user_service
-            .delete(req, res)
+            .delete(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -46,7 +46,7 @@ exports.user_controller = {
     },
     deleteAll: (req, res, next) => {
         user_service
-            .deleteAll(req, res)
+            .deleteAll()
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -54,7 +54,7 @@ exports.user_controller = {
     },
     sing_in: (req, res, next) => {
         user_service
-            .sing_in(req, res)
+            .sing_in(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })

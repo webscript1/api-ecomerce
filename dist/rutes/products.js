@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const products_1 = require("../controllers/products");
-const sesion_1 = __importDefault(require("../middleware/sesion"));
-const products__validator_1 = require("../middleware/validators/products..validator");
-const roles_1 = require("../middleware/roles");
+const sesion_1 = __importDefault(require("../core/middleware/sesion"));
+const products__validator_1 = require("../core/middleware/validators/products..validator");
+const roles_1 = require("../core/middleware/roles");
 const router = (0, express_1.Router)();
 router.get('/test', products_1.controller_product.test);
 router.post('/', products__validator_1.validator_create_product, sesion_1.default, (0, roles_1.checkRole)(['admin']), products_1.controller_product.create);

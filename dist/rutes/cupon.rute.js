@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const cupon_controller_1 = require("../controllers/cupon.controller");
-const sesion_1 = __importDefault(require("../middleware/sesion"));
-const roles_1 = require("../middleware/roles");
+const sesion_1 = __importDefault(require("../core/middleware/sesion"));
+const roles_1 = require("../core/middleware/roles");
 const router = (0, express_1.Router)();
 router.post('/', sesion_1.default, (0, roles_1.checkRole)(['admin']), cupon_controller_1.controller_cupon.create);
 router.get('/:codigo', cupon_controller_1.controller_cupon.get);

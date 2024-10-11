@@ -6,7 +6,7 @@ const payment_service = new payment__service_1.PaymentService();
 exports.payment_controller = {
     create: (req, res, next) => {
         payment_service
-            .createPayment(req, res)
+            .createPayment(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -14,7 +14,7 @@ exports.payment_controller = {
     },
     get: (req, res, next) => {
         payment_service
-            .getPayment(req, res)
+            .getPayment(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -22,7 +22,7 @@ exports.payment_controller = {
     },
     update: (req, res, next) => {
         payment_service
-            .updatePayment(req, res)
+            .updatePayment(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -30,7 +30,7 @@ exports.payment_controller = {
     },
     delete: (req, res, next) => {
         payment_service
-            .deletePayment(req, res)
+            .deletePayment(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -38,7 +38,7 @@ exports.payment_controller = {
     },
     delete_all: (req, res, next) => {
         payment_service
-            .deleteAllPayment(req, res)
+            .deleteAllPayment()
             .then((data) => {
             return res.status(data.code).send(data);
         })

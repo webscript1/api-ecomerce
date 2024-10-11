@@ -6,7 +6,7 @@ const user_service = new orders_1.OrdersService();
 exports.orders_controller = {
     create: (req, res, next) => {
         user_service
-            .createOrder(req, res)
+            .createOrder(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -14,7 +14,7 @@ exports.orders_controller = {
     },
     get: (req, res, next) => {
         user_service
-            .getOrder(req, res)
+            .getOrder(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -22,7 +22,7 @@ exports.orders_controller = {
     },
     update: (req, res, next) => {
         user_service
-            .updateOrder(req, res)
+            .updateOrder(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -30,7 +30,7 @@ exports.orders_controller = {
     },
     delete: (req, res, next) => {
         user_service
-            .deleteOrder(req, res)
+            .deleteOrder(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -38,7 +38,7 @@ exports.orders_controller = {
     },
     get_all: (req, res, next) => {
         user_service
-            .getOrders(req, res)
+            .getOrders(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -46,7 +46,7 @@ exports.orders_controller = {
     },
     delete_all: (req, res, next) => {
         user_service
-            .deleteAllOrder(req, res)
+            .deleteAllOrder(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })
@@ -54,7 +54,7 @@ exports.orders_controller = {
     },
     detailUserAndOrders: (req, res, next) => {
         user_service
-            .detailUserAndOrders(req, res)
+            .detailUserAndOrders(req)
             .then((data) => {
             return res.status(data.code).send(data);
         })

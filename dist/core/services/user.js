@@ -15,217 +15,139 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.User_service = void 0;
 const users_1 = __importDefault(require("../../models/users"));
 exports.User = users_1.default;
-const password_1 = require("../utils/password");
-const jwt_1 = require("../utils/jwt");
-const orders_1 = __importDefault(require("../../models/orders"));
-const errorHandler_1 = require("../errors/errorHandler");
+const password_handler_1 = require("../handlers/password.handler");
+const jwt_handller_1 = require("../handlers/jwt.handller");
+const errorHandler_1 = require("../handlers/errorHandler");
 class User_service {
     test() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'test user',
-                };
-                return data;
-            }
-            catch (error) {
-                throw error;
-            }
+            const data = {
+                code: 200,
+                message: 'test user',
+            };
+            return data;
         });
     }
-    create(req, res) {
+    create(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 201,
-                    message: 'usuario creado',
-                };
-                const user = new users_1.default(req.body);
-                user.role = 'user';
-                console.log('user ', user);
-                const user_save = yield user.save();
-                data.data = user_save;
-                return data;
-            }
-            catch (error) {
-                throw error;
-            }
+            const data = {
+                code: 201,
+                message: 'usuario creado',
+            };
+            const user = new users_1.default(req.body);
+            user.role = 'user';
+            console.log('user ', user);
+            const user_save = yield user.save();
+            data.data = user_save;
+            return data;
         });
     }
-    get(req, res) {
+    get(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'usuario',
-                };
-                const { id, page, sort, limit = 10, email } = req.query;
-                let users;
-                const options = {
-                    limit: limit,
-                    page: page || 1,
-                    // Proyección: solo las propiedades 'result' y 'profit'
-                    sort: { createdAt: Number(sort) || -1 }, //-1 : desendente 1:asendente
-                    select: '-password',
-                };
-                if (id) {
-                    users = yield users_1.default.findById(id).select('-password');
-                    if (!users) {
-                        throw new errorHandler_1.NotFoundError('usuario no encontrado');
-                    }
-                    data.data = users;
-                    return data;
+            const data = {
+                code: 200,
+                message: 'usuario',
+            };
+            const { id, page, sort, limit = 10, email } = req.query;
+            let users;
+            const options = {
+                limit: limit,
+                page: page || 1,
+                // Proyección: solo las propiedades 'result' y 'profit'
+                sort: { createdAt: Number(sort) || -1 }, //-1 : desendente 1:asendente
+                select: '-password',
+            };
+            if (id) {
+                users = yield users_1.default.findById(id).select('-password');
+                if (!users) {
+                    throw new errorHandler_1.NotFoundError('usuario no encontrado');
                 }
-                if (email) {
-                    users = yield users_1.default.findOne({ email: email }).select('-password');
-                    if (!users) {
-                        throw new errorHandler_1.NotFoundError('usuario no encontrado');
-                    }
-                    data.data = users;
-                    return data;
-                }
-                users = yield users_1.default.paginate({}, options);
                 data.data = users;
                 return data;
             }
-            catch (error) {
-                throw error;
-            }
-        });
-    }
-    update(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'usuario actualizado',
-                };
-                const { id } = req.params;
-                const user_update = yield users_1.default.findByIdAndUpdate(id, req.body, {
-                    new: true,
-                }).select('-password');
-                if (!user_update) {
-                    throw new errorHandler_1.NotFoundError('usuario no encontrado para actualizar');
+            if (email) {
+                users = yield users_1.default.findOne({ email: email }).select('-password');
+                if (!users) {
+                    throw new errorHandler_1.NotFoundError('usuario no encontrado');
                 }
-                data.data = user_update;
+                data.data = users;
                 return data;
             }
-            catch (error) {
-                throw error;
-            }
+            users = yield users_1.default.paginate({}, options);
+            data.data = users;
+            return data;
         });
     }
-    delete(req, res) {
+    update(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'usuario eliminado',
-                };
-                const { id } = req.params;
-                const user_delete = yield users_1.default.findByIdAndDelete(id).select('-password');
-                if (!user_delete) {
-                    throw new errorHandler_1.NotFoundError('usuario no encontrado para eliminar');
-                }
-                data.data = user_delete;
-                return data;
+            const data = {
+                code: 200,
+                message: 'usuario actualizado',
+            };
+            const { id } = req.params;
+            const user_update = yield users_1.default.findByIdAndUpdate(id, req.body, {
+                new: true,
+            }).select('-password');
+            if (!user_update) {
+                throw new errorHandler_1.NotFoundError('usuario no encontrado para actualizar');
             }
-            catch (error) {
-                throw error;
-            }
+            data.data = user_update;
+            return data;
         });
     }
-    deleteAll(req, res) {
+    delete(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'todos los usuarios eliminados',
-                };
-                const user_delete = yield users_1.default.deleteMany();
-                if (!user_delete) {
-                    throw new errorHandler_1.NotFoundError('no hay usuarios para eliminar');
-                }
-                data.data = user_delete;
-                return data;
+            const data = {
+                code: 200,
+                message: 'usuario eliminado',
+            };
+            const { id } = req.params;
+            const user_delete = yield users_1.default.findByIdAndDelete(id).select('-password');
+            if (!user_delete) {
+                throw new errorHandler_1.NotFoundError('usuario no encontrado para eliminar');
             }
-            catch (error) {
-                throw error;
-            }
+            data.data = user_delete;
+            return data;
         });
     }
-    sing_in(req, res) {
+    deleteAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { email, password } = req.body;
-                let token;
-                const data = {
-                    code: 0,
-                    message: '',
-                };
-                // Buscar el usuario por su correo electrónico
-                const user = yield users_1.default.findOne({ email });
-                // Verificar si el usuario existe
-                if (!user) {
-                    throw new errorHandler_1.NotFoundError('Email no existe');
-                }
-                // Verificar la contraseña
-                const passwordMatch = yield (0, password_1.compare)(password, user.password);
-                if (!passwordMatch) {
-                    throw new errorHandler_1.UnauthorizedError('contraseña incorrecta.');
-                }
-                // Generar token de acceso (JWT) para el usuario
-                token = yield (0, jwt_1.tokenSing)(user);
-                data.code = 200;
-                data.message = 'sesion iniciada';
-                data.data = { token: token };
-                return data;
+            const data = {
+                code: 200,
+                message: 'todos los usuarios eliminados',
+            };
+            const user_delete = yield users_1.default.deleteMany();
+            if (!user_delete) {
+                throw new errorHandler_1.NotFoundError('no hay usuarios para eliminar');
             }
-            catch (error) {
-                throw error;
-            }
+            data.data = user_delete;
+            return data;
         });
     }
-    detailUserAndOrders(req, res) {
+    sing_in(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'detalle user y orders',
-                };
-                const userId = req.body.user._id;
-                let user;
-                let orders;
-                let detailUser = {
-                    user: undefined,
-                    orders: undefined,
-                };
-                const { page = 1, sort = -1 } = req.query;
-                let products;
-                const options = {
-                    limit: 10,
-                    page: Number(page) || 1,
-                    // Proyección: solo las propiedades 'result' y 'profit'
-                    sort: { createdAt: Number(sort) || -1 }, //-1 : desendente 1:asendente
-                };
-                if (userId) {
-                    user = yield users_1.default.findById(userId).select('firstName lastName email ');
-                    if (!user) {
-                        data.code = 404;
-                        data.message = 'usuario no encontrado ';
-                        return data;
-                    }
-                    detailUser.user = user;
-                }
-                orders = yield orders_1.default.paginate({ userId: userId }, options);
-                detailUser.orders = orders;
-                data.data = detailUser;
-                return data;
+            const { email, password } = req.body;
+            const data = {
+                code: 0,
+                message: '',
+            };
+            // Buscar el usuario por su correo electrónico
+            const user = yield users_1.default.findOne({ email });
+            // Verificar si el usuario existe
+            if (!user) {
+                throw new errorHandler_1.NotFoundError('Email no existe');
             }
-            catch (error) {
-                throw error;
+            // Verificar la contraseña
+            const passwordMatch = yield (0, password_handler_1.compare)(password, user.password);
+            if (!passwordMatch) {
+                throw new errorHandler_1.UnauthorizedError('contraseña incorrecta.');
             }
+            // Generar token de acceso (JWT) para el usuario
+            const token = yield (0, jwt_handller_1.tokenSing)(user);
+            data.code = 200;
+            data.message = 'sesion iniciada';
+            data.data = { token: token };
+            return data;
         });
     }
 }

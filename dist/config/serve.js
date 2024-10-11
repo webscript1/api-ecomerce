@@ -39,7 +39,7 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const app_1 = __importDefault(require("../app"));
 const db_1 = __importDefault(require("./db"));
-const port = process.env.PORT || 3702;
+const port = process.env.PORT || 3703;
 app_1.default.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Servidor escuchando en el puerto: ' + port);
     //conectarse con la base de datos mongodb.

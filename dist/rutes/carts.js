@@ -5,10 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const carts_1 = require("../controllers/carts");
-const sesion_1 = __importDefault(require("../middleware/sesion"));
-const carts_validatir_1 = require("../middleware/validators/carts.validatir");
+const sesion_1 = __importDefault(require("../core/middleware/sesion"));
+const carts_validatir_1 = require("../core/middleware/validators/carts.validatir");
 const router = (0, express_1.Router)();
 router.post('/', carts_validatir_1.validator_cart, sesion_1.default, carts_1.cars_controller.create);
+router.get('/count', sesion_1.default, carts_1.cars_controller.countCart);
 router.get('/:code', sesion_1.default, carts_1.cars_controller.get);
 router.get('/', sesion_1.default, carts_1.cars_controller.get_all);
 router.put('/qty', sesion_1.default, carts_1.cars_controller.updateQtyCart);

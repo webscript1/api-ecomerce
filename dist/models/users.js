@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const password_1 = require("../core/utils/password");
+const password_handler_1 = require("../core/handlers/password.handler");
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
 const userSchema = new mongoose_1.Schema({
     firstName: {
@@ -78,7 +78,7 @@ userSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (this.isModified('password') || this.isNew) {
             try {
-                this.password = yield (0, password_1.encrypt)(this.password);
+                this.password = yield (0, password_handler_1.encrypt)(this.password);
                 next();
             }
             catch (error) {
@@ -93,7 +93,7 @@ userSchema.pre('save', function (next) {
 // Método para comparar la contraseña ingresada con la almacenada en la base de datos
 userSchema.methods.comparePassword = function (password) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield (0, password_1.compare)(password, this.password);
+        return yield (0, password_handler_1.compare)(password, this.password);
     });
 };
 // Añadir el plugin de paginación

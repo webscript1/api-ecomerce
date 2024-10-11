@@ -22,7 +22,7 @@ exports.controller_category = {
     },
     getAll: (req, res, next) => {
         categoryService
-            .getCategories(req)
+            .getCategories()
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -46,7 +46,7 @@ exports.controller_category = {
     },
     deleteAll: (req, res, next) => {
         categoryService
-            .deleteAllCategories(req)
+            .deleteAllCategories()
             .then(data => {
             return res.status(data.code).send(data);
         })

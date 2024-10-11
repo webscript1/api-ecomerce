@@ -6,7 +6,7 @@ const produtcs = new products_1.ProductService();
 exports.controller_product = {
     test: (req, res, next) => {
         produtcs
-            .test(req, res)
+            .test()
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -14,7 +14,7 @@ exports.controller_product = {
     },
     create: (req, res, next) => {
         produtcs
-            .create(req, res)
+            .create(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -22,7 +22,7 @@ exports.controller_product = {
     },
     get: (req, res, next) => {
         produtcs
-            .get(req, res)
+            .get(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -30,7 +30,7 @@ exports.controller_product = {
     },
     update: (req, res, next) => {
         produtcs
-            .update(req, res)
+            .update(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -38,7 +38,7 @@ exports.controller_product = {
     },
     delete: (req, res, next) => {
         produtcs
-            .delete(req, res)
+            .delete(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -46,7 +46,7 @@ exports.controller_product = {
     },
     delete_all: (req, res, next) => {
         produtcs
-            .delete_all(req, res)
+            .delete_all()
             .then(data => {
             return res.status(data.code).send(data);
         })

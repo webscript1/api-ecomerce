@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const orders_1 = require("../controllers/orders");
-const sesion_1 = __importDefault(require("../middleware/sesion"));
-const orders_validator_1 = require("../middleware/validators/orders.validator");
+const sesion_1 = __importDefault(require("../core/middleware/sesion"));
+const orders_validator_1 = require("../core/middleware/validators/orders.validator");
 const router = (0, express_1.Router)();
 router.post('/', orders_validator_1.validator_create_order, sesion_1.default, orders_1.orders_controller.create);
 router.get('/', orders_1.orders_controller.get);

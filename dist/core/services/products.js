@@ -14,153 +14,123 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductService = void 0;
 const products_1 = __importDefault(require("../../models/products"));
-const errorHandler_1 = require("../errors/errorHandler");
+const errorHandler_1 = require("../handlers/errorHandler");
 class ProductService {
     constructor() { }
-    test(req, res) {
+    test() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'test products',
-                };
-                return data;
-            }
-            catch (error) {
-                throw error;
-            }
+            const data = {
+                code: 200,
+                message: 'test products',
+            };
+            return data;
         });
     }
-    create(req, res) {
+    create(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 201,
-                    message: 'create product success',
-                };
-                const productsAtributes = req.body;
-                const product = new products_1.default(productsAtributes);
-                const pathImage = yield products_1.default.findOne({ path: product.path });
-                if (pathImage) {
-                    throw new errorHandler_1.ResourceAlreadyExistsError(`path '${productsAtributes.path}' ya existe, debe ser unico`);
-                }
-                const save_product = yield product.save();
-                data.data = save_product;
-                return data;
+            const data = {
+                code: 201,
+                message: 'create product success',
+            };
+            const productsAtributes = req.body;
+            const product = new products_1.default(productsAtributes);
+            const pathImage = yield products_1.default.findOne({ path: product.path });
+            if (pathImage) {
+                throw new errorHandler_1.ResourceAlreadyExistsError(`path '${productsAtributes.path}' ya existe, debe ser unico`);
             }
-            catch (error) {
-                throw error;
-            }
+            const save_product = yield product.save();
+            data.data = save_product;
+            return data;
         });
     }
-    get(req, res) {
+    get(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { id, page = 1, sort = -1, path, limit = 10 } = req.query;
-                const data = {
-                    code: 200,
-                    message: 'producto',
-                };
-                // Buscar por ID
-                if (id) {
-                    const order = yield products_1.default.findById(id);
-                    if (!order) {
-                        throw new errorHandler_1.NotFoundError('producto no encontrado');
-                    }
-                    data.data = order;
-                    return data;
+            const { id, page = 1, sort = -1, path, limit = 10 } = req.query;
+            const data = {
+                code: 200,
+                message: 'producto',
+            };
+            // Buscar por ID
+            if (id) {
+                const order = yield products_1.default.findById(id);
+                if (!order) {
+                    throw new errorHandler_1.NotFoundError('producto no encontrado');
                 }
-                // Buscar por path
-                if (path) {
-                    const product = yield products_1.default.findOne({ path });
-                    if (!product) {
-                        throw new errorHandler_1.NotFoundError('producto no encontrado');
-                    }
-                    data.data = product;
-                    return data;
-                }
-                // Opción de paginación
-                const options = {
-                    limit: Number(limit), // Aseguramos que limit sea un número
-                    page: Number(page), // Aseguramos que page sea un número
-                    sort: { createdAt: Number(sort) }, // Sort por fecha de creación
-                };
-                // Paginación de productos
-                const products = yield products_1.default.paginate({}, options);
-                data.data = products;
+                data.data = order;
                 return data;
             }
-            catch (error) {
-                throw error;
+            // Buscar por path
+            if (path) {
+                const product = yield products_1.default.findOne({ path });
+                if (!product) {
+                    throw new errorHandler_1.NotFoundError('producto no encontrado');
+                }
+                data.data = product;
+                return data;
             }
+            // Opción de paginación
+            const options = {
+                limit: Number(limit), // Aseguramos que limit sea un número
+                page: Number(page), // Aseguramos que page sea un número
+                sort: { createdAt: Number(sort) }, // Sort por fecha de creación
+            };
+            // Paginación de productos
+            const products = yield products_1.default.paginate({}, options);
+            data.data = products;
+            return data;
         });
     }
-    update(req, res) {
+    update(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'producto actualizado',
-                };
-                const { id } = req.params;
-                const proudctUpdate = req.body;
-                if (proudctUpdate.path) {
-                    const product = yield products_1.default.findOne({
-                        path: proudctUpdate.path,
-                        _id: { $ne: id }, // Filtra por un _id que sea diferente al valor de id
-                    });
-                    if (product) {
-                        throw new errorHandler_1.ResourceAlreadyExistsError(`el path: ''${proudctUpdate.path}'' ya esta en uso`);
-                    }
-                }
-                const update_product = yield products_1.default.findByIdAndUpdate(id, proudctUpdate, {
-                    new: true,
+            const data = {
+                code: 200,
+                message: 'producto actualizado',
+            };
+            const { id } = req.params;
+            const proudctUpdate = req.body;
+            if (proudctUpdate.path) {
+                const product = yield products_1.default.findOne({
+                    path: proudctUpdate.path,
+                    _id: { $ne: id }, // Filtra por un _id que sea diferente al valor de id
                 });
-                if (!update_product) {
-                    throw new errorHandler_1.NotFoundError(`product ${id}  no encontrado para atualizar`);
+                if (product) {
+                    throw new errorHandler_1.ResourceAlreadyExistsError(`el path: ''${proudctUpdate.path}'' ya esta en uso`);
                 }
-                data.data = update_product;
-                return data;
             }
-            catch (error) {
-                throw error;
+            const update_product = yield products_1.default.findByIdAndUpdate(id, proudctUpdate, {
+                new: true,
+            });
+            if (!update_product) {
+                throw new errorHandler_1.NotFoundError(`product ${id}  no encontrado para atualizar`);
             }
+            data.data = update_product;
+            return data;
         });
     }
-    delete(req, res) {
+    delete(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'producto eliminado',
-                };
-                const { id } = req.params;
-                const delete_product = yield products_1.default.findByIdAndDelete(id);
-                if (!delete_product) {
-                    throw new errorHandler_1.NotFoundError(`product ${id}  no encontrado para eliminar`);
-                }
-                data.data = delete_product;
-                return data;
+            const data = {
+                code: 200,
+                message: 'producto eliminado',
+            };
+            const { id } = req.params;
+            const delete_product = yield products_1.default.findByIdAndDelete(id);
+            if (!delete_product) {
+                throw new errorHandler_1.NotFoundError(`product ${id}  no encontrado para eliminar`);
             }
-            catch (error) {
-                throw error;
-            }
+            data.data = delete_product;
+            return data;
         });
     }
-    delete_all(req, res) {
+    delete_all() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = {
-                    code: 200,
-                    message: 'todos los productos eliminados',
-                };
-                const delete_product = yield products_1.default.deleteMany();
-                data.data = delete_product;
-                return data;
-            }
-            catch (error) {
-                throw error;
-            }
+            const data = {
+                code: 200,
+                message: 'todos los productos eliminados',
+            };
+            const delete_product = yield products_1.default.deleteMany();
+            data.data = delete_product;
+            return data;
         });
     }
 }

@@ -6,7 +6,7 @@ const cuponService = new cupon_service_1.CuponService();
 exports.controller_cupon = {
     create: (req, res, next) => {
         cuponService
-            .createCupon(req, res)
+            .createCupon(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -14,7 +14,7 @@ exports.controller_cupon = {
     },
     get: (req, res, next) => {
         cuponService
-            .getCupon(req, res)
+            .getCupon(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -22,7 +22,7 @@ exports.controller_cupon = {
     },
     getAll: (req, res, next) => {
         cuponService
-            .getCupones(req, res)
+            .getCupones(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -30,7 +30,7 @@ exports.controller_cupon = {
     },
     update: (req, res, next) => {
         cuponService
-            .updateCupon(req, res)
+            .updateCupon(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -38,7 +38,7 @@ exports.controller_cupon = {
     },
     delete: (req, res, next) => {
         cuponService
-            .deleteCupon(req, res)
+            .deleteCupon(req)
             .then(data => {
             return res.status(data.code).send(data);
         })
@@ -46,7 +46,7 @@ exports.controller_cupon = {
     },
     deleteAll: (req, res, next) => {
         cuponService
-            .delete_all(req, res)
+            .delete_all()
             .then(data => {
             return res.status(data.code).send(data);
         })
