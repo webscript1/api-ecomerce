@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { User_service } from '../core/services/user';
 import { serviceResult } from '../core/interfaces/interfaces';
 
@@ -15,7 +15,7 @@ export const user_controller = {
   },
   create: (req: Request, res: Response, next: NextFunction) => {
     user_service
-      .create(req, res)
+      .create(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -23,7 +23,7 @@ export const user_controller = {
   },
   get: (req: Request, res: Response, next: NextFunction) => {
     user_service
-      .get(req, res)
+      .get(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -31,7 +31,7 @@ export const user_controller = {
   },
   update: (req: Request, res: Response, next: NextFunction) => {
     user_service
-      .update(req, res)
+      .update(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -39,7 +39,7 @@ export const user_controller = {
   },
   delete: (req: Request, res: Response, next: NextFunction) => {
     user_service
-      .delete(req, res)
+      .delete(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -47,7 +47,7 @@ export const user_controller = {
   },
   deleteAll: (req: Request, res: Response, next: NextFunction) => {
     user_service
-      .deleteAll(req, res)
+      .deleteAll()
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -55,7 +55,7 @@ export const user_controller = {
   },
   sing_in: (req: Request, res: Response, next: NextFunction) => {
     user_service
-      .sing_in(req, res)
+      .sing_in(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })

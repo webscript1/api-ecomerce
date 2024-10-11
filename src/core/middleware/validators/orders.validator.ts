@@ -1,7 +1,6 @@
 import { check } from 'express-validator';
-import validationResults from '../../core/utils/validator';
-import mongoose from 'mongoose';
-
+import { validationResults } from '../../handlers/validator.hadler';
+import { Request, Response, NextFunction } from 'express';
 export const validator_create_order = [
   check('products')
     .exists()
@@ -11,7 +10,7 @@ export const validator_create_order = [
     .isArray({ min: 1 })
     .withMessage('Debe haber al menos un producto.')
     .custom(products => {
-      for (let product of products) {
+      for (const product of products) {
         if (typeof product.name !== 'string' || product.name.trim() === '') {
           throw new Error('El ID del producto no es válido.');
         }
@@ -150,7 +149,7 @@ export const validator_create_order = [
     .isIn(['pending', 'completed', 'cancelled'])
     .withMessage('El estado de la orden no es válido.'),
 
-  (req: any, res: any, next: any) => {
+  (req: Request, res: Response, next: NextFunction) => {
     return validationResults(req, res, next);
   },
 ];

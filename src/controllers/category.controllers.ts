@@ -24,7 +24,7 @@ export const controller_category = {
 
   getAll: (req: Request, res: Response, next: NextFunction) => {
     categoryService
-      .getCategories(req)
+      .getCategories()
       .then(data => {
         return res.status(data.code).send(data);
       })
@@ -51,7 +51,7 @@ export const controller_category = {
 
   deleteAll: (req: Request, res: Response, next: NextFunction) => {
     categoryService
-      .deleteAllCategories(req)
+      .deleteAllCategories()
       .then(data => {
         return res.status(data.code).send(data);
       })

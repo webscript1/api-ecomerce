@@ -15,7 +15,7 @@ export interface IProductDocument extends Document {
 
 // Crear un tipo personalizado para manejar el método paginate
 type PaginateModel<T> = Model<T> & {
-  paginate: (query?: any, options?: any) => Promise<any>;
+  paginate: (query?: unknown, options?: unknown) => Promise<unknown>;
 };
 
 // Definir el esquema del producto

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { CartService } from '../core/services/cars';
 import { serviceResult } from '../core/interfaces/interfaces';
 
@@ -7,7 +7,7 @@ const cart_service = new CartService();
 export const cars_controller = {
   create: (req: Request, res: Response, next: NextFunction) => {
     cart_service
-      .createCart(req, res)
+      .createCart(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -15,7 +15,7 @@ export const cars_controller = {
   },
   get: (req: Request, res: Response, next: NextFunction) => {
     cart_service
-      .getCart(req, res)
+      .getCart(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -23,7 +23,7 @@ export const cars_controller = {
   },
   update: (req: Request, res: Response, next: NextFunction) => {
     cart_service
-      .updateCart(req, res)
+      .updateCart(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -31,7 +31,7 @@ export const cars_controller = {
   },
   delete: (req: Request, res: Response, next: NextFunction) => {
     cart_service
-      .deleteCart(req, res)
+      .deleteCart(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -39,7 +39,7 @@ export const cars_controller = {
   },
   get_all: (req: Request, res: Response, next: NextFunction) => {
     cart_service
-      .getCarts(req, res)
+      .getCarts(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -47,7 +47,7 @@ export const cars_controller = {
   },
   delete_all: (req: Request, res: Response, next: NextFunction) => {
     cart_service
-      .deleteAllCarts(req, res)
+      .deleteAllCarts(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })
@@ -56,6 +56,14 @@ export const cars_controller = {
   updateQtyCart: (req: Request, res: Response, next: NextFunction) => {
     cart_service
       .updateQtyCart(req)
+      .then((data: serviceResult) => {
+        return res.status(data.code).send(data);
+      })
+      .catch(next);
+  },
+  countCart: (req: Request, res: Response, next: NextFunction) => {
+    cart_service
+      .countOrdersCart(req)
       .then((data: serviceResult) => {
         return res.status(data.code).send(data);
       })

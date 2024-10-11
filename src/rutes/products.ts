@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { controller_product } from '../controllers/products';
-import Auth from '../middleware/sesion';
-import { validator_create_product } from '../middleware/validators/products..validator';
-import { checkRole } from '../middleware/roles';
+import Auth from '../core/middleware/sesion';
+import { validator_create_product } from '../core/middleware/validators/products..validator';
+import { checkRole } from '../core/middleware/roles';
 
 const router = Router();
 

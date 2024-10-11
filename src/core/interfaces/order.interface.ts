@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { cuponDetail } from './cupon.interface';
 
 export interface Orders {
@@ -18,10 +17,10 @@ export interface MetodoPago {
   hash: string;
 }
 export interface ProductOrder {
-  id: String;
-  name: String;
-  price: Number;
-  count: Number;
-  imageUrl: String;
-  path: String;
+  id: string;
+  name: string;
+  price: number;
+  count: number;
+  imageUrl: string;
+  path: string;
 }

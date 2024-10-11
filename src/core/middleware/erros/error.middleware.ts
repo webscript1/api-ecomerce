@@ -1,6 +1,6 @@
 // middleware/errorHandler.ts
 import { Request, Response, NextFunction } from 'express';
-import { CustomError } from '../../core/errors/errorHandler';
+import { CustomError } from '../../handlers/errorHandler';
 
 export const errorHandler = (
   err: Error,
@@ -9,7 +9,6 @@ export const errorHandler = (
   next: NextFunction,
 ): void => {
   if (err instanceof CustomError) {
-    console.log('dddddddddddddddddddddddddddddddddddddddddddddd');
     // Errores personalizados
     res.status(err.statusCode).send({ message: err.message });
   } else {

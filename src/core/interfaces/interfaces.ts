@@ -1,5 +1,5 @@
-export interface serviceResult{
-    code:number,
-    message:string,
-    data?:any
+export interface serviceResult {
+  code: number;
+  message: string;
+  data?: unknown;
 }

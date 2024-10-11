@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { controller_cupon } from '../controllers/cupon.controller';
-import Auth from '../middleware/sesion';
+import Auth from '../core/middleware/sesion';
 
-import { checkRole } from '../middleware/roles';
+import { checkRole } from '../core/middleware/roles';
 
 const router = Router();
 

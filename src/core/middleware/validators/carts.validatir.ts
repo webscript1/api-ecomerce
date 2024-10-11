@@ -1,6 +1,7 @@
-import { check, body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 import mongoose from 'mongoose';
-import validationResults from '../../core/utils/validator';
+import { validationResults } from '../../handlers/validator.hadler';
+import { Request, Response, NextFunction } from 'express';
 
 export const validator_cart = [
   body('products')
@@ -21,7 +22,7 @@ export const validator_cart = [
       return true;
     }), //.withMessage('El campo products debe tener una estructura válida.'),
 
-  (req: any, res: any, next: any) => {
+  (req: Request, res: Response, next: NextFunction) => {
     return validationResults(req, res, next);
   },
 ];

@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { user_controller } from '../controllers/users';
-import { checkRole } from '../middleware/roles';
-import { checkUniqueEmail } from '../middleware/checkUniqueEmail ';
+import { checkRole } from '../core/middleware/roles';
+import { checkUniqueEmail } from '../core/middleware/checkUniqueEmail ';
 import {
   valitador_sing_in,
   valitador_sing_up,
-} from '../middleware/validators/user.validator';
-import Auth from '../middleware/sesion';
+} from '../core/middleware/validators/user.validator';
+import Auth from '../core/middleware/sesion';
 
 const router = Router();
 

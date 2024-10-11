@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
  * @param {*} passwordPlain
  * @returns
  */
-export const encrypt = async (passwordPlain: any) => {
+export const encrypt = async (passwordPlain: string) => {
   //encriptar contrase#a
   //passwordPlain: contrase#a aencriptar
   const hast = await bcrypt.hash(passwordPlain, 10);
@@ -19,6 +19,6 @@ export const encrypt = async (passwordPlain: any) => {
  * @param {*} hashPassword
  * @returns
  */
-export const compare = async (passwordPlain: any, hashPassword: any) => {
+export const compare = async (passwordPlain: string, hashPassword: string) => {
   return await bcrypt.compare(passwordPlain, hashPassword);
 };

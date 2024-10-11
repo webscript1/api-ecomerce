@@ -8,7 +8,7 @@ export interface ICupon extends Document {
   cantidadMinimaCompra: number;
   productosAplicables: [string];
   fechaExpiracion: Date;
-  activo: Boolean;
+  activo: boolean;
   fechaCreacion: Date;
   count: number;
   limit: boolean;

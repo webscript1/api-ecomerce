@@ -1,5 +1,6 @@
 import { check } from 'express-validator';
-import validationResults from '../../core/utils/validator';
+import { validationResults } from '../../handlers/validator.hadler';
+import { Request, Response, NextFunction } from 'express';
 
 export const valitador_sing_in = [
   check(
@@ -18,7 +19,7 @@ export const valitador_sing_in = [
     .notEmpty()
     .isString()
     .isLength({ min: 4, max: 100 }),
-  (req: any, res: any, next: any) => {
+  (req: Request, res: Response, next: NextFunction) => {
     return validationResults(req, res, next);
   },
 ];
@@ -63,7 +64,7 @@ export const valitador_sing_up = [
     .notEmpty()
     .isString()
     .isLength({ min: 4, max: 30 }),
-  (req: any, res: any, next: any) => {
+  (req: Request, res: Response, next: NextFunction) => {
     return validationResults(req, res, next);
   },
 ];

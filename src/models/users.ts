@@ -1,5 +1,5 @@
 import mongoose, { CallbackError, Document, Model, Schema } from 'mongoose';
-import { encrypt, compare } from '../core/utils/password';
+import { encrypt, compare } from '../core/handlers/password.handler';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 // Definir una interfaz para el esquema del documentoe
@@ -11,12 +11,11 @@ export interface IUserDocument extends Document {
   phone: string;
   role: 'user' | 'admin';
   createdAt: Date;
-  comparePassword(password: string): Promise<boolean>;
 }
 
 // Definir una interfaz para el modelo de Mongoose con el método paginate
 interface IUserModel extends Model<IUserDocument> {
-  paginate(query?: any, options?: any): Promise<any>; // Definir el método paginate
+  paginate(query?: unknown, options?: unknown): Promise<unknown>; // Definir el método paginate
 }
 
 const userSchema: Schema<IUserDocument> = new Schema({

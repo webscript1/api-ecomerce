@@ -1,132 +1,107 @@
-import { Request, Response } from 'express';
-import mongoose from 'mongoose';
-import Payment, { IPaymentDocument } from '../../models/payment.model';
-import { NotFoundError } from '../errors/errorHandler';
+import { Request } from 'express';
 
-interface serviceResult {
-  code: number;
-  message: string;
-  data?: any;
-}
+import Payment, { IPaymentDocument } from '../../models/payment.model';
+import { NotFoundError } from '../handlers/errorHandler';
+import { serviceResult } from '../interfaces/interfaces';
 
 export class PaymentService {
   constructor() {}
 
-  async createPayment(req: Request, res: Response): Promise<serviceResult> {
-    try {
-      const params: IPaymentDocument = req.body;
+  async createPayment(req: Request): Promise<serviceResult> {
+    const params: IPaymentDocument = req.body;
 
-      const newModel = new Payment(params);
+    const newModel = new Payment(params);
 
-      await newModel.save();
+    await newModel.save();
 
-      // Devolver el resultado exitoso
-      const data: serviceResult = {
-        code: 201, // Código HTTP 201: Recurso creado
-        message: 'Payment creado exitosamente',
-        data: newModel,
-      };
+    // Devolver el resultado exitoso
+    const data: serviceResult = {
+      code: 201, // Código HTTP 201: Recurso creado
+      message: 'Payment creado exitosamente',
+      data: newModel,
+    };
 
-      return data;
-    } catch (error) {
-      throw error;
-    }
+    return data;
   }
 
-  async getPayment(req: Request, res: Response): Promise<serviceResult> {
-    try {
-      const data: serviceResult = {
-        code: 200,
-        message: 'Modelo encontrado',
-      };
-      const { id, page = 1, sort = -1, limit = 10 } = req.query;
+  async getPayment(req: Request): Promise<serviceResult> {
+    const data: serviceResult = {
+      code: 200,
+      message: 'Modelo encontrado',
+    };
+    const { id, page = 1, sort = -1, limit = 10 } = req.query;
 
-      if (id) {
-        const payment = await Payment.findById(id);
-        if (!payment) {
-          throw new NotFoundError('payment no encontrado');
-        }
-        data.data = payment;
-        return data;
+    if (id) {
+      const payment = await Payment.findById(id);
+      if (!payment) {
+        throw new NotFoundError('payment no encontrado');
       }
-      // Opción de paginación
-      const options = {
-        limit: Number(limit), // Aseguramos que limit sea un número
-        page: Number(page), // Aseguramos que page sea un número
-        sort: { createdAt: Number(sort) }, // Sort por fecha de creación
-      };
-
-      // Paginación de productos
-      const payment = await Payment.paginate({}, options);
       data.data = payment;
-
       return data;
-    } catch (error) {
-      throw error;
     }
+    // Opción de paginación
+    const options = {
+      limit: Number(limit), // Aseguramos que limit sea un número
+      page: Number(page), // Aseguramos que page sea un número
+      sort: { createdAt: Number(sort) }, // Sort por fecha de creación
+    };
+
+    // Paginación de productos
+    const payment = await Payment.paginate({}, options);
+    data.data = payment;
+
+    return data;
   }
 
-  async updatePayment(req: Request, res: Response): Promise<serviceResult> {
-    try {
-      const paramsUpdate: IPaymentDocument = req.body;
+  async updatePayment(req: Request): Promise<serviceResult> {
+    const paramsUpdate: IPaymentDocument = req.body;
 
-      // Actualizar el Payment
-      const payment = await Payment.findByIdAndUpdate(
-        req.params.id,
-        paramsUpdate,
-        {
-          new: true, // Retorna el nuevo documento actualizado
-        },
-      );
-      if (!payment) {
-        throw new NotFoundError('Payment no encontrado para actualizar');
-      }
-
-      // Devolver la respuesta solo si se actualizó correctamente
-      const data: serviceResult = {
-        code: 200,
-        message: 'Payment actualizado',
-        data: payment,
-      };
-
-      return data;
-    } catch (error) {
-      throw error;
+    // Actualizar el Payment
+    const payment = await Payment.findByIdAndUpdate(
+      req.params.id,
+      paramsUpdate,
+      {
+        new: true, // Retorna el nuevo documento actualizado
+      },
+    );
+    if (!payment) {
+      throw new NotFoundError('Payment no encontrado para actualizar');
     }
+
+    // Devolver la respuesta solo si se actualizó correctamente
+    const data: serviceResult = {
+      code: 200,
+      message: 'Payment actualizado',
+      data: payment,
+    };
+
+    return data;
   }
 
-  async deletePayment(req: Request, res: Response): Promise<serviceResult> {
-    try {
-      const payment = await Payment.findByIdAndDelete(req.params.id);
-      if (!payment) {
-        throw new NotFoundError('Payment no encontrado para eliminar');
-      }
-
-      const data: serviceResult = {
-        code: 200,
-        message: 'Payment eliminado eliminado',
-        data: payment,
-      };
-
-      return data;
-    } catch (error) {
-      throw error;
+  async deletePayment(req: Request): Promise<serviceResult> {
+    const payment = await Payment.findByIdAndDelete(req.params.id);
+    if (!payment) {
+      throw new NotFoundError('Payment no encontrado para eliminar');
     }
+
+    const data: serviceResult = {
+      code: 200,
+      message: 'Payment eliminado eliminado',
+      data: payment,
+    };
+
+    return data;
   }
 
-  async deleteAllPayment(req: Request, res: Response): Promise<serviceResult> {
-    try {
-      const paymentDeleted = await Payment.deleteMany();
+  async deleteAllPayment(): Promise<serviceResult> {
+    const paymentDeleted = await Payment.deleteMany();
 
-      const data: serviceResult = {
-        code: 200,
-        message: 'Todos los modelos eliminados',
-        data: paymentDeleted,
-      };
+    const data: serviceResult = {
+      code: 200,
+      message: 'Todos los modelos eliminados',
+      data: paymentDeleted,
+    };
 
-      return data;
-    } catch (error) {
-      throw error;
-    }
+    return data;
   }
 }

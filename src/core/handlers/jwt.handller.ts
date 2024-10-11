@@ -1,5 +1,6 @@
 'uset strict';
 import jwt from 'jsonwebtoken';
+import { IUserDocument } from '../../models/users';
 const JWT_SECRET = process.env.JWT_SECRET;
 const timeExpires = process.env.TIME_EXPIRES_SESSION || '60h';
 
@@ -14,14 +15,13 @@ if (!JWT_SECRET) {
  * @returns
  */
 //user es el objeto del usuario a firmar
-export const tokenSing = async (user: any) => {
+export const tokenSing = async (user: IUserDocument) => {
   try {
     //firmar token
     const sign = jwt.sign(
       {
         id: user.id,
         role: user.role,
-       
       },
       JWT_SECRET,
       {
@@ -45,7 +45,7 @@ export const verifyToken = async (tokenJwt: string) => {
   try {
     return jwt.verify(tokenJwt, JWT_SECRET);
   } catch (e) {
-    console.error('error  al verificar token: ', e);
+    //console.error('error  al verificar token: ', e);
     return e;
   }
 };

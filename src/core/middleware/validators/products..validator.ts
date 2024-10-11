@@ -1,5 +1,6 @@
 import { check } from 'express-validator';
-import validationResults from '../../core/utils/validator';
+import { validationResults } from '../../handlers/validator.hadler';
+import { Request, Response, NextFunction } from 'express';
 
 export const validator_create_product = [
   check('name')
@@ -60,7 +61,7 @@ export const validator_create_product = [
     .isLength({ min: 1, max: 1000 })
     .withMessage('La URL de la imagen debe tener entre 1 y 1000 caracteres.'),
 
-  (req: any, res: any, next: any) => {
+  (req: Request, res: Response, next: NextFunction) => {
     return validationResults(req, res, next);
   },
 ];

@@ -1,7 +1,7 @@
 export interface cuponDetail {
-  codigo: String;
-  descuento: Number;
-  count: Number;
-  limit: Boolean;
-  valid: Boolean;
+  codigo: string;
+  descuento: number;
+  count: number;
+  limit: boolean;
+  valid: boolean;
 }

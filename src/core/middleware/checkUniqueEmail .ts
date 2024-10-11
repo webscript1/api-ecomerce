@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import User from '../models/users';
-import { ResourceAlreadyExistsError } from '../core/errors/errorHandler';
+import User from '../../models/users';
+import { ResourceAlreadyExistsError } from '../handlers/errorHandler';
 
 // Middleware para verificar la unicidad del correo electrónico
 export const checkUniqueEmail = async (

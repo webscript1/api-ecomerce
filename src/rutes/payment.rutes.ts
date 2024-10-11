@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { payment_controller } from '../controllers/payment.controller';
-import Auth from '../middleware/sesion';
-import { validator_create_product } from '../middleware/validators/products..validator';
-import { checkRole } from '../middleware/roles';
+import Auth from '../core/middleware/sesion';
+
+import { checkRole } from '../core/middleware/roles';
 
 const router = Router();
 
